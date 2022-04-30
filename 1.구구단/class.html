@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // LikeButton 컴포넌트 만듦  
+    class GuGuDan extends React.Component { 
+      constructor(props) {
+        super(props);
+        this.state = {
+          first: Math.ceil(Math.random() * 9),
+          second: Math.ceil(Math.random() * 9),
+          value: '',
+          result: '',
+        }
+      }
+
+      // this 바인딩때문에 화살표 함수로 작성하기! 
+      onSubmit = (e) => {
+        e.preventDefault();
+        if(Number(this.state.value) === this.state.first * this.state.second) {
+
+          // 이전값을 가져옴으로써, 헷갈리지 않음 
+          this.setState((prevState) => { 
+            return {
+              result: '정답: ' + prevState.value,
+              first: Math.ceil(Math.random() * 9),
+              second: Math.ceil(Math.random() * 9),
+              value: ''
+            };
+          });  
+          this.input.focus();                
+        } else {
+          this.setState({ 
+            value: '',
+            result: '땡!' 
+          });
+          this.input.focus();                
+        }
+      }
+
+      onChange = (e) => {
+        this.setState({ 
+          result: '',
+          value: e.target.value 
+        });
+      }
+
+      refInput = (c) => {
+        this.input = c; 
+      }
+
+      input; // input에 focus 주기위해 ref 사용 
+      
+      // {}에는 js를 넣을 수 있다
+      // <React.Fragment> 은 <>와 같다. (지금은 babel문제로 다음과 같이 작성)
+      render() {
+        console.log('렌더링');
+        return (
+          <React.Fragment> 
+            <div>{this.state.first}곱하기 {this.state.second}는?</div>
+            <form onSubmit={this.onSubmit}>
+              <input ref={this.refInput} type="number" value={this.state.value} onChange={this.onChange} />
+              <button>입력!</button>
+            </form>
+            <div>{this.state.result}</div>
+          </React.Fragment>
+        )
+      }
+    }
+  </script>
+  <script type="text/babel"> 
+    // 컴포넌트를 여러개 만들 수 있다. 
+    ReactDOM.render(<div><GuGuDan /><GuGuDan /><GuGuDan /></div>, document.querySelector('#root'));
+  </script>
+</body>
+</html>
